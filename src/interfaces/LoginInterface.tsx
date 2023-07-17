@@ -10,3 +10,7 @@ export interface RegisterFormInterface {
   gender: "male" | "female";
   birthday: string;
 }
+
+export interface LoginResponseInterface {
+  access_token: string;
+}

@@ -1,19 +1,32 @@
 import { Button, DatePicker, Form, Input, Select } from "antd";
+import {
+  LoginResponseInterface,
+  RegisterFormInterface,
+} from "../../interfaces/LoginInterface";
+import { loginUser, registerUser } from "../../services/AuthService";
 
-import React from "react";
-import { RegisterFormInterface } from "../../interfaces/LoginInterface";
+import { AxiosResponse } from "axios";
 import moment from "moment";
-import { registerUser } from "../../services/UserService";
+import { setKey } from "../../utils/SessionStorage";
+import { useNavigate } from "react-router-dom";
 
 const { Item } = Form;
 const { Option } = Select;
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
 
   const handleSubmit = (formValues: RegisterFormInterface) => {
     formValues.birthday = moment(formValues.birthday).format("YYYY-MM-DD");
     registerUser(formValues).then((res) => {
+      // todo agregar msj
       console.log(res);
+      loginUser(formValues).then(
+        (res: AxiosResponse<LoginResponseInterface>) => {
+          setKey("token", res.data.access_token);
+          navigate('/home');
+        }
+      );
     });
   };
 
