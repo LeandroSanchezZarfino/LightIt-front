@@ -50,6 +50,15 @@ AppAxios.interceptors.response.use(
     return response;
   },
   function (error) {
+    if (error.code && error.code === "ERR_NETWORK") {
+      notification.error({
+        message: "An error has ocurred",
+        description: "Please check your internet connection",
+        duration: 5,
+      });
+      return Promise.reject(error);
+    }
+
     if (error.response.status === 401 && window.location.pathname !== "/") {
       notification.error({
         message: "Session expired",
@@ -70,6 +79,7 @@ AppAxios.interceptors.response.use(
         duration: 5,
       });
     }
+
 
     return Promise.reject(error);
   }
