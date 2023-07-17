@@ -1,6 +1,5 @@
 export interface PaginatedData<T> extends Page{
   data: Array<T>;
-
 }
 
 export interface Page {
