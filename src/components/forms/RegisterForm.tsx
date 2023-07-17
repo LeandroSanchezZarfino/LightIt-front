@@ -9,25 +9,28 @@ import { AxiosResponse } from "axios";
 import moment from "moment";
 import { setKey } from "../../utils/SessionStorage";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const { Item } = Form;
 const { Option } = Select;
 
 const RegisterForm = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (formValues: RegisterFormInterface) => {
+    setLoading(true);
     formValues.birthday = moment(formValues.birthday).format("YYYY-MM-DD");
-    registerUser(formValues).then((res) => {
-      // todo agregar msj
-      console.log(res);
-      loginUser(formValues).then(
-        (res: AxiosResponse<LoginResponseInterface>) => {
-          setKey("token", res.data.access_token);
-          navigate('/home');
-        }
-      );
-    });
+    registerUser(formValues)
+      .then((res) => {
+        loginUser(formValues).then(
+          (res: AxiosResponse<LoginResponseInterface>) => {
+            setKey("token", res.data.access_token);
+            navigate("/home");
+          }
+        );
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -46,16 +49,20 @@ const RegisterForm = () => {
       </Item>
       <Item
         name="email"
-        rules={[
-          { required: true, message: "Email is required" },
-          { min: 8, message: "Password must contain at least 8 characters" },
-        ]}
+        rules={[{ required: true, message: "Email is required" }]}
       >
         <Input placeholder="email@email.com" type="email" />
       </Item>
       <Item
         name={"password"}
-        rules={[{ required: true, message: "Password is required" }]}
+        rules={[
+          { required: true, message: "Password is required" },
+          {
+            min: 8,
+            type: "string",
+            message: "Password must contain at least 8 characters",
+          },
+        ]}
       >
         <Input.Password placeholder="password" />
       </Item>
@@ -75,7 +82,9 @@ const RegisterForm = () => {
         </Select>
       </Item>
       <Item>
-        <Button htmlType="submit">Register</Button>
+        <Button type="primary" loading={loading} htmlType="submit">
+          Register
+        </Button>
       </Item>
     </Form>
   );

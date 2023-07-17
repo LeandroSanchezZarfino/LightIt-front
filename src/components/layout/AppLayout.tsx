@@ -1,59 +1,46 @@
-import {
-  LaptopOutlined,
-  NotificationOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
+import { Button, Layout, Menu } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 
-import type { MenuProps } from "antd";
+import { LogoutOutlined } from "@ant-design/icons";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { removeKey } from "../../utils/SessionStorage";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header } = Layout;
 
 interface Props {
   children: React.ReactNode;
 }
 
-const menuItems = [
-  { label: "Diagnosis", url: "/home", key: "home" },
-  { label: "History", url: "/historic", key: "historic" },
-];
-
 const AppLayout: React.FC<Props> = (props: Props) => {
   const navigate = useNavigate();
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
-  const handleMenuClick = ({ key }: { key: string }) => {
-    const { url } = menuItems.find((item) => item.key === key) || {};
-    if (url) {
-      navigate(url);
-    }
+  const logout = () => {
+    removeKey("token");
+    navigate("/");
   };
+  
+  const menuItems = [
+    { label: <Link to={"/home"}>Diagnosis</Link>, key: "home" },
+    { label: <Link to={"/history"}>History</Link>, key: "history" },
+    // Tailwind classes doesn't work here
+    { label: <Button type="link" style={{color: "rgba(255, 255, 255, 0.65)"}} icon={<LogoutOutlined/>} onClick={logout}> Logout</Button>, key: "logout" },
+  ];
 
   return (
     <Layout>
-      <Header style={{ display: "flex", alignItems: "center" }}>
+      <Header className="flex">
         <Menu
-          onClick={handleMenuClick}
+          className="w-full"
           theme="dark"
           mode="horizontal"
           items={menuItems}
         />
       </Header>
-      <Content style={{ padding: "0 50px" }}>
-        <Layout style={{ padding: "24px 0", background: colorBgContainer }}>
-          <Content style={{ padding: "0 24px", minHeight: 280 }}>
-            {props.children}
-          </Content>
-        </Layout>
-      </Content>
-      <Footer style={{ textAlign: "center" }}>
-        Ant Design ©2023 Created by Ant UED
-      </Footer>
+
+      <div className="p-6 md:p-12 min-h-[85vh]">{props.children}</div>
+      <div className="p-4 w-full text-center bg-sky-50">
+        LightIt Challenge - Leandro Sanchez Zarfino
+      </div>
     </Layout>
   );
 };
