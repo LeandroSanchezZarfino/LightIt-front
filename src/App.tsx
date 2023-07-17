@@ -2,7 +2,7 @@ import "./index.css";
 import 'react-circular-progressbar/dist/styles.css';
 import 'antd/dist/antd.css';
 
-import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 import Diagnosis from "./pages/Diagnoses";
 import Historic from "./pages/Historic";
